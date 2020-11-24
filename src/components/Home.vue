@@ -1,6 +1,6 @@
 <template>
   <div class="container mt-5 text-center">
-      <h1 class="mb-5">Bienvenido...</h1>
+      <h1 class="mb-5">Bienvenido... </h1>
       <b-button @click="volver" type="button" variant="warning">Volver al login</b-button>
   </div>
 </template>

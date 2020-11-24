@@ -7,7 +7,7 @@
       </b-form-group>
 
       <b-form-group id="input-group-2" label="Password:" label-for="input-2">
-        <b-form-input id="input-2" v-model="form.name" type="password" required placeholder="Enter password" key=""></b-form-input>
+        <b-form-input id="input-2" v-model="form.password" type="password" required placeholder="Enter password" key=""></b-form-input>
       </b-form-group>
       <b-button class="mr-2" type="submit" variant="primary">Ingresar</b-button>
       <b-button type="reset" variant="danger">Reset</b-button>
@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import firebase from 'firebase';
 export default {
   name: 'Login',
   data() {
@@ -28,7 +29,35 @@ export default {
   },
   methods: {
     ingresar(){
-      this.$router.push( 'home' );
+      if(this.form.email && this.form.password && this.form.password.length >= 6){
+        firebase.auth().signInWithEmailAndPassword(this.form.email, this.form.password)
+          .then(resp => {
+            this.$router.push('/home');
+            console.log(resp.user.email);
+          })
+          .catch(error => {
+            console.error(error.code);
+            console.error(error.message);
+            if (error.code == "auth/wrong-password") {
+              this.errores(error);
+            } else if(error.code == "auth/invalid-email") {
+              this.errores(error);
+            } else if(error.code == "auth/user-disabled"){
+              this.errores(error);
+            } else {
+              this.errores(error);
+              this.$router.push('/register');
+            }
+          })
+      } else {
+        console.log("No se puede conectar");
+      }
+    },
+    errores(error){
+      this.$notify.error({
+        title: 'Error',
+        message: `${error.message}`
+      })
     },
     onReset(evt) {
         evt.preventDefault()
